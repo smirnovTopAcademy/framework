@@ -20,3 +20,9 @@ Route::get('/', function () {
 Route::get('/landing', [App\Http\Controllers\Landing::class, 'index']);
 
 Route::get('/age', [App\Http\Controllers\Landing::class, 'json']);
+
+Route::get('/questions', [App\Http\Controllers\Questions::class, 'get'])
+  ->name('question.get');
+
+Route::post('/questions', [App\Http\Controllers\Questions::class, 'post'])
+  ->name('question.post');
