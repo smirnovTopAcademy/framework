@@ -3,7 +3,6 @@
 @section('title', 'My site - login')
 
 @section('body')
-
           <div class="container py-10 h-100">
             <div class="row d-flex justify-content-center align-items-center h-100">
               <div class="col">
@@ -22,7 +21,7 @@
 
                         @if (session()->has('error'))
                         <div class="alert alert-danger" role="alert">
-                          {!! Lang::get(session()->get('error')) !!}
+                          {!! session()->get('error') !!}
                         </div>
                         @endif
 
