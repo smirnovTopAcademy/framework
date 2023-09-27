@@ -29,4 +29,11 @@ class Questions extends Controller
 
       return redirect()->route('question.get');
     }
+
+    public function listAll()
+    {
+      $listAll = Question::all();
+
+      return view('questions_list', ['questions' => $listAll]);
+    }
 }
