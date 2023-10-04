@@ -56,6 +56,16 @@
         <section class="bg-dark page-section" id="body">
           @yield('body')
         </section>
+
+        <!-- UserHistory-->
+        <section class="bg-dark text-white" id="user-history">
+          <ul>
+          @foreach(Session::get('user_history', []) as $page)
+              
+          @endforeach
+          </ul>
+        </section>
+
         <!-- Services-->
         <section class="page-section" id="services">
             <div class="container">

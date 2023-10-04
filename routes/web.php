@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 
+use Illuminate\Support\Facades\Cookie;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,6 +16,18 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
+
+    // $count = session('main_count', 0);
+    // $count++;
+    // session(['main_count' => $count]);
+
+
+    // echo session('main_count');
+
+    echo "Last visit " . Cookie::get('last_visit', 'Never was');
+
+    Cookie::make('last_visit', date('Y-m-d H:i:s'), 60 * 24 * 30);
+
     return view('welcome');
 })->name('main');
 

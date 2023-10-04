@@ -25,6 +25,16 @@
                         </div>
                         @endif
 
+                        @if ($errors->any())
+                        <div class="alert alert-danger" role="alert">
+                          <ul>
+                          @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                          @endforeach
+                          </ul>
+                        </div>
+                        @endif
+
                         <div class="form-outline mb-4">
                           <input type="text" id="form3Example97" name="email" class="form-control form-control-lg" />
                           <label class="form-label" for="form3Example97">Email ID</label>

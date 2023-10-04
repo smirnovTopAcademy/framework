@@ -15,13 +15,20 @@ class SignIn extends Controller
 
     public function post(Request $request)
     {
-       $user = User::where('email', $request->get('email'))
+      $data = $request->validate(
+        [
+          'email' => 'required|email',
+          'password' => 'required',
+        ]
+      );
+
+       $user = User::where('email', $data['email'])
         ->get();
 
         $hasher = app('hash');
 
         if ($hasher->check(
-          hash('sha256', $request->get('password')),
+          hash('sha256', $data['password']),
           $user[0]->password
         )) {
           Auth::login($user[0]);
