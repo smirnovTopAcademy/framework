@@ -1,0 +1,24 @@
+* * * * * php artisan app-pv113:test-command
+
+# Каждую минуту
+#* * * * * echo 'Test ok' >> /tmp/cron.test
+
+# Каждые 15 минут
+#*/15 * * * * echo 'Test ok' >> /tmp/cron.test
+
+# Каждый день в час ночи
+#0 1 * * * echo 'Test ok' >> /tmp/cron.test
+
+
+#0 1-3 * * * echo 'Test ok' >> /tmp/cron.test
+#0 1,10,20 * * * echo 'Test ok' >> /tmp/cron.test
+
+
+# Каждое 10 число любого месяца в час ночи
+#0 1 10 * * echo 'Test ok' >> /tmp/cron.test
+
+# Каждое 10 число любого месяца в час ночи
+#0 1 10 */2 * echo 'Test ok' >> /tmp/cron.test
+
+# Каждый понедельник в час ночи
+#0 1 * * 1 echo 'Test ok' >> /tmp/cron.test

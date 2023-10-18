@@ -26,7 +26,7 @@ Route::get('/', function () {
 
     echo "Last visit " . Cookie::get('last_visit', 'Never was');
 
-    Cookie::make('last_visit', date('Y-m-d H:i:s'), 60 * 24 * 30);
+    Cookie::queue('last_visit', date('Y-m-d H:i:s'), 60 * 24 * 30);
 
     return view('welcome');
 })->name('main');
