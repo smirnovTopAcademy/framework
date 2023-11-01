@@ -62,3 +62,11 @@ Route::post('/questions', [App\Http\Controllers\Questions::class, 'post'])
 
 Route::get('/questions/list', [App\Http\Controllers\Questions::class, 'listAll'])
   ->name('question.list');
+
+
+Route::get('/image', [App\Http\Controllers\Image::class, 'create'])
+    ->name('image');
+
+
+Route::get('/graph', [App\Http\Controllers\Image::class, 'graph'])
+    ->name('image.graph');
