@@ -19,13 +19,13 @@ abstract class Colour
       $this->image = $image;
    }
 
-  public function getColor()
-  {
-    return imagecolorallocate(
-      $this->image->getResource()
-      , $this->getRed()
-      , $this->getGreen()
-      , $this->getBlue()
-    );
-  }
+    public function getColor()
+    {
+      return imagecolorallocate(
+        $this->image->getResource()
+        , $this->getRed()
+        , $this->getGreen()
+        , $this->getBlue()
+      );
+    }
 }

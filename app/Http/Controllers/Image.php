@@ -6,6 +6,11 @@ use Illuminate\Http\Request;
 use App\Image\Line;
 use App\Image\Colours\Black;
 use App\Image\Image as ImageCanvas;
+use App\Image\Config;
+use App\Image\Point;
+use App\Image\Dot;
+use App\Image\ImageFill;
+use App\Image\Colours\Factory as ColoursFactory;
 
 class Image extends Controller
 {
@@ -57,6 +62,7 @@ class Image extends Controller
 
     public function graph (Request $request)
     {
+
         $properties = [
           'margin' => [
             'vertical' => 0.1,
@@ -67,20 +73,23 @@ class Image extends Controller
           'hatchHeight' => 10,
         ];
 
-        $image = new \App\Image\Image(
-          $properties['width']
-          , $properties['height']
-        );
 
-        $fill = new \App\Image\ImageFill($image);
+        $config = $this->getConfig();
 
-        $fill->fill(new \App\Image\Colours\White($image));
 
-        $dotList = $request->all()['dot'] ?? [];
+/********************************************************************/
 
-        $this->drawStartCoordinate($image, $properties);
+        $dotList = $this->getDotList($request);
 
-        $this->drawYAxis($image, $properties);
+
+        $image = $this->getImage($config);
+
+        $this
+          ->fillImage($image, $config)
+          ->drawStartCoordinate($image, $config)
+          ->drawYAxis($image, $config);
+
+
 
         $this->drawXAxis($image, $properties);
 
@@ -90,63 +99,87 @@ class Image extends Controller
 
         $this->drawPointsAndLines($image, $properties, $dotList);
 
-
-        ob_start();
-        imagepng($image->getResource(), null, 0);
-        $image = ob_get_contents();
-        ob_end_clean();
-
-        $response = \Illuminate\Support\Facades\Response::make($image, 200);
-        $response->header("Content-Type", "image/png");
+        $response = $this->getResponse($image);
 
         return $response;
     }
 
-    private function drawStartCoordinate($image, $properties)
+    private function fillImage(ImageCanvas $image, Config $config)
     {
-      $point = new \App\Image\Point($image);
+      $fill = new ImageFill($image);
 
-      $point->drawPoint(
-          floor($properties['width']
-            * $properties['margin']['horizontal']),
-          floor($properties['height']
-            - $properties['height']
-              * $properties['margin']['vertical']),
-          new \App\Image\Colours\Black($image)
+      $fill->fill(
+        (new ColoursFactory())
+          ->getColor($image, $config->getBackgroundColor())
         );
+
+        return $this;
     }
 
-    private function drawYAxis(ImageCanvas $image, array $properties)
+    private function getImage(Config $config)
+    {
+      return new ImageCanvas($config->getWidth(), $config->getHeight());
+    }
+
+    private function drawStartCoordinate(ImageCanvas $image, Config $config)
+    {
+      $point = new Point($image);
+
+      $point->drawPoint(
+        $this->getLeftMargin($config),
+        $this->getBottomMargin($config),
+        (new ColoursFactory())
+          ->getColor($image, $config->getStartCoordinateColor())
+        );
+
+        return $this;
+    }
+
+    private function drawYAxis(ImageCanvas $image, Config $config)
     {
         $y = new Line($image);
 
         $y->draw(
-          $this->getLeftMargin($properties),
-          $this->getBottomMargin($properties),
-          $this->getLeftMargin($properties),
-          $this->getTopMargin($properties),
-          new Black($image)
+          $this->getLeftMargin($config),
+          $this->getBottomMargin($config),
+          $this->getLeftMargin($config),
+          $this->getTopMargin($config),
+          (new ColoursFactory())
+            ->getColor($image, $config->getYAxisColor())
         );
     }
 
-    private function getLeftMargin($properties): int
+    private function getLeftMargin(Config $config): int
     {
-      return floor($properties['width']
-        * $properties['margin']['horizontal']);
+      return floor($config->getWidth()
+        * $config->getMargin('horizontal')
+      );
     }
 
-    private function getBottomMargin($properties): int
+    private function getBottomMargin(Config $config): int
     {
-      return floor($properties['height']
-        - $properties['height']
-          * $properties['margin']['vertical']);
+      return floor($config->getHeight()
+        - $config->getHeight()
+          * $config->getMargin('vertical')
+        );
     }
 
-    private function getTopMargin($properties): int
+    private function getTopMargin(Config $config): int
     {
-      return floor($properties['height']
-        * $properties['margin']['vertical']);
+      return floor($config->getHeight()
+        * $config->getMargin('vertical'));
     }
+
+
+
+
+
+
+
+
+
+
+
 
     private function drawXAxis($image, $properties)
     {
@@ -319,4 +352,45 @@ class Image extends Controller
 
     }
 
+    private function getConfig($type = 'image_graph')
+    {
+      $config = new Config();
+
+      $config
+        ->setHeight(config("$type.height"))
+        ->setWidth(config("$type.width"))
+        ->setHatchHeight(config("$type.hatchHeight"))
+        ->setBackgroundColor(config("$type.backgroundcolor"))
+        ->setStartCoordinateColor(config("$type.startCoordinateColor"))
+        ->setMargin(config("$type.margin"))
+        ->setYAxisColor(config("$type.yAxis"))
+        ;
+
+      return $config;
+    }
+
+    private function getResponse($image)
+    {
+      ob_start();
+      imagepng($image->getResource(), null, 0);
+      $image = ob_get_contents();
+      ob_end_clean();
+
+      $response = \Illuminate\Support\Facades\Response::make($image, 200);
+      $response->header("Content-Type", "image/png");
+
+      return $response;
+    }
+
+    private function getDotList($request)
+    {
+      $list = [];
+
+      foreach( $request->all()['dot'] ?? [] as $dot)
+      {
+        $list[] = new Dot($dot);
+      }
+
+      return $request->all()['dot'] ?? [];
+    }
 }

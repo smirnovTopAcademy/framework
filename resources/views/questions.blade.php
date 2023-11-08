@@ -48,6 +48,7 @@
         <section class="page-section" id="body">
             <form method="post" action="{{ route('question.post') }}" style="margin-left: 30%">
               @csrf
+
                 <div><label for="title">Title</label><input type="text" id="title" name="title"/></div>
                 <div><span>text</span><textarea type="text" name="text"></textarea></div>
                 <div><input type="submit"></div>

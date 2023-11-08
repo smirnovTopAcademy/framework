@@ -36,4 +36,11 @@ class Questions extends Controller
 
       return view('questions_list', ['questions' => $listAll]);
     }
+
+    public function listAllApi()
+    {
+      $listAll = Question::all();
+
+      return response()->json($listAll);
+    }
 }
